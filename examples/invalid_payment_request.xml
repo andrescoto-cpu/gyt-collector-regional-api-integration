@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PaymentRequest>
+    <Header>
+        <TransactionId>TXN-2025-001235</TransactionId>
+        <Timestamp>2025-10-15T18:30:00</Timestamp>
+        <Version>1.0</Version>
+        <SourceSystem>RegionalCollector</SourceSystem>
+    </Header>
+    <Payment>
+        <!-- Invalid: Amount should be decimal, not string -->
+        <Amount>invalid-amount</Amount>
+        <Currency>GTQ</Currency>
+        <AccountNumber>1234567890</AccountNumber>
+        <CustomerName>María García</CustomerName>
+        <Reference>REF-2025-002</Reference>
+    </Payment>
+</PaymentRequest>

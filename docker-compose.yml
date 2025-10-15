@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  gyt-collector:
+    build: .
+    ports:
+      - "443:443"
+    environment:
+      - NODE_ENV=production
+      - PORT=443
+      - AKROS_API_URL=${AKROS_API_URL}
+      - AKROS_CLIENT_ID=${AKROS_CLIENT_ID}
+      - AKROS_CLIENT_SECRET=${AKROS_CLIENT_SECRET}
+      - AKROS_TOKEN_URL=${AKROS_TOKEN_URL}
+      - AKROS_API_ENDPOINT=${AKROS_API_ENDPOINT}
+      - SSL_KEY_PATH=/usr/src/app/certs/key.pem
+      - SSL_CERT_PATH=/usr/src/app/certs/cert.pem
+      - LOG_LEVEL=info
+    volumes:
+      - ./certs:/usr/src/app/certs:ro
+      - ./logs:/usr/src/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:443/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

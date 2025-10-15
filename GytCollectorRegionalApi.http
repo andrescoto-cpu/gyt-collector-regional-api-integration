@@ -1,0 +1,6 @@
+@GytCollectorRegionalApi_HostAddress = http://localhost:5241
+
+GET {{GytCollectorRegionalApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
