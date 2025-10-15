@@ -17,6 +17,12 @@ GytCollectorApi/
 ├── Program.cs                    # Punto de entrada de la aplicación
 ├── appsettings.json             # Configuración de la aplicación
 └── GytCollectorApi.csproj       # Archivo de proyecto .NET
+
+GytCollectorApi.Tests/
+├── AkrosApiServiceTests.cs      # Pruebas unitarias del servicio Akros
+└── GytCollectorApi.Tests.csproj # Archivo de proyecto de pruebas
+
+GytCollectorApi.sln              # Archivo de solución .NET
 ```
 
 ## Características
@@ -58,11 +64,40 @@ cd GytCollectorApi
 dotnet run
 ```
 
+O desde la raíz del proyecto:
+
+```bash
+dotnet run --project GytCollectorApi
+```
+
 ### Compilación
+
+Compilar todo el proyecto:
+
+```bash
+dotnet build GytCollectorApi.sln
+```
+
+O compilar solo la API:
 
 ```bash
 cd GytCollectorApi
 dotnet build
+```
+
+### Pruebas (Tests)
+
+Ejecutar todas las pruebas:
+
+```bash
+dotnet test GytCollectorApi.sln
+```
+
+O ejecutar solo las pruebas del proyecto de tests:
+
+```bash
+cd GytCollectorApi.Tests
+dotnet test
 ```
 
 ### Publicación
@@ -145,6 +180,30 @@ Cuando la aplicación se ejecuta en modo desarrollo, la documentación OpenAPI e
   "message": "string",
   "lastUpdated": "2025-10-15T12:00:00"
 }
+```
+
+## Testing
+
+El proyecto incluye pruebas unitarias completas para el servicio `AkrosApiService`. Las pruebas cubren:
+
+- ✅ Envío exitoso de pagos
+- ✅ Manejo de errores HTTP en envío de pagos
+- ✅ Consulta exitosa de estado de pago
+- ✅ Manejo de errores HTTP en consulta de estado
+- ✅ Validación de conexión exitosa
+- ✅ Manejo de fallo en validación de conexión
+
+Ejecutar las pruebas:
+
+```bash
+dotnet test GytCollectorApi.sln
+```
+
+Para ver cobertura de código detallada, ejecutar:
+
+```bash
+cd GytCollectorApi.Tests
+dotnet test --collect:"XPlat Code Coverage"
 ```
 
 ## Licencia
