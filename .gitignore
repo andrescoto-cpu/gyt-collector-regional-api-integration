@@ -1,1 +1,27 @@
-test_case_*.json
+# Build results
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.csproj.user
+
+# Logs
+logs/
+*.log
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# NuGet
+packages/
+*.nupkg
