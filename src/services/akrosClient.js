@@ -7,13 +7,6 @@ class AkrosClient {
         this.tokenUrl = process.env.AKROS_TOKEN_URL;
         this.mockMode = process.env.MOCK_AKROS === 'true';
     }
-    constructor() {
-        this.token = null;
-        this.tokenExpiry = null;
-        this.clientId = process.env.AKROS_CLIENT_ID;
-        this.clientSecret = process.env.AKROS_CLIENT_SECRET;
-        this.tokenUrl = process.env.AKROS_TOKEN_URL;
-    }
 
     async authenticate() {
         if (this.mockMode) {

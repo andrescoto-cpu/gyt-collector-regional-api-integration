@@ -1,3 +1,7 @@
+const akrosClient = require('../services/akrosClient');
+const xmlConverter = require('../utils/xmlConverter');
+const logger = require('../utils/logger');
+
 class CollectorController {
     async processPayment(req, res) {
         try {
@@ -18,25 +22,25 @@ class CollectorController {
             res.status(200).send(responseXml);
         } catch (error) {
             // Handle errors
-            this.handleError(error, res);
+            handleError(error, res);
         }
     }
-
-    handleError(error, res) {
-        // Log the error
-        logger.error(error);
-
-        // Return standardized error response in XML format
-        const errorResponse = {
-            error: {
-                message: error.message || 'Internal Server Error',
-                code: error.code || 500
-            }
-        };
-        const errorXml = xmlConverter.jsonToXml(errorResponse);
-        res.set('Content-Type', 'application/xml');
-        res.status(error.code || 500).send(errorXml);
-    }
 }
+
+const handleError = (error, res) => {
+    // Log the error
+    logger.error(error);
+
+    // Return standardized error response in XML format
+    const errorResponse = {
+        error: {
+            message: error.message || 'Internal Server Error',
+            code: error.code || 500
+        }
+    };
+    const errorXml = xmlConverter.jsonToXml(errorResponse);
+    res.set('Content-Type', 'application/xml');
+    res.status(error.code || 500).send(errorXml);
+};
 
 module.exports = new CollectorController();
