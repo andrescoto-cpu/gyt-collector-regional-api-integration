@@ -1,0 +1,39 @@
+{
+  "name": "gyt-collector-regional-api-integration",
+  "version": "1.0.0",
+  "description": "Integración API Colecturía Regional con Web Service Banco GYT Continental",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": [
+    "gyt",
+    "collector",
+    "api",
+    "integration",
+    "xml",
+    "json",
+    "oauth2"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "xml2js": "^0.6.2",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.0.1",
+    "eslint": "^8.53.0"
+  }
+}
