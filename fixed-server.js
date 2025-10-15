@@ -54,25 +54,94 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Endpoint de payment (simplificado para evitar errores)
-app.post('/api/collector/payment', (req, res) => {
+// Endpoint de payment con logging detallado
+app.post('/api/collector/payment', async (req, res) => {
     try {
-        console.log('Procesando POST /api/collector/payment');
+        console.log('\n=== INICIO PROCESAMIENTO PAYMENT ===');
+        console.log('Timestamp:', new Date().toISOString());
         console.log('Content-Type:', req.get('Content-Type'));
+        console.log('Content-Length:', req.get('Content-Length'));
         
-        // Respuesta mock por ahora
-        const mockResponse = `<?xml version="1.0" encoding="UTF-8"?>
-<response>
-    <status>success</status>
-    <message>Payment processed successfully (MOCK)</message>
-    <timestamp>${new Date().toISOString()}</timestamp>
-</response>`;
+        // Log del XML recibido
+        console.log('\n--- XML RECIBIDO ---');
+        console.log('Raw body type:', typeof req.body);
+        console.log('Raw body:', req.body);
+        
+        // Verificar si es string o objeto
+        let xmlData = req.body;
+        if (typeof xmlData === 'object') {
+            console.log('Body es objeto, convirtiendo a string...');
+            xmlData = JSON.stringify(xmlData);
+        }
+        
+        console.log('XML Data (string):', xmlData);
+        console.log('XML Length:', xmlData?.length || 0);
+        
+        // Simulación de conversión XML a JSON
+        console.log('\n--- CONVERSIÓN XML -> JSON ---');
+        let jsonData;
+        
+        if (xmlData && xmlData.trim().startsWith('<')) {
+            // Es XML válido, intentar parsear
+            const xml2js = require('xml2js');
+            const parser = new xml2js.Parser({ explicitArray: false });
+            
+            try {
+                jsonData = await new Promise((resolve, reject) => {
+                    parser.parseString(xmlData, (err, result) => {
+                        if (err) reject(err);
+                        else resolve(result);
+                    });
+                });
+                
+                console.log('✅ XML parseado exitosamente');
+                console.log('JSON resultante:', JSON.stringify(jsonData, null, 2));
+            } catch (parseError) {
+                console.error('❌ Error parseando XML:', parseError.message);
+                jsonData = { error: 'Invalid XML format', raw: xmlData };
+            }
+        } else {
+            console.log('⚠️  No es XML válido, tratando como datos simples');
+            jsonData = { rawData: xmlData, note: 'Not valid XML' };
+        }
+        
+        // Log del procesamiento
+        console.log('\n--- PROCESAMIENTO JSON ---');
+        console.log('Datos procesados:', JSON.stringify(jsonData, null, 2));
+        
+        // Generar respuesta XML
+        console.log('\n--- GENERANDO RESPUESTA XML ---');
+        const responseData = {
+            response: {
+                status: 'success',
+                message: 'Payment processed successfully',
+                timestamp: new Date().toISOString(),
+                processedData: jsonData
+            }
+        };
+        
+        const xml2js = require('xml2js');
+        const builder = new xml2js.Builder();
+        const responseXml = builder.buildObject(responseData);
+        
+        console.log('Respuesta XML generada:');
+        console.log(responseXml);
+        console.log('\n=== FIN PROCESAMIENTO PAYMENT ===\n');
         
         res.set('Content-Type', 'application/xml');
-        res.status(200).send(mockResponse);
+        res.status(200).send(responseXml);
+        
     } catch (error) {
-        console.error('Error en payment endpoint:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('\n❌ ERROR EN PAYMENT ENDPOINT:');
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        console.log('=== FIN CON ERROR ===\n');
+        
+        res.status(500).json({ 
+            error: 'Internal server error',
+            message: error.message,
+            timestamp: new Date().toISOString()
+        });
     }
 });
 
