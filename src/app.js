@@ -1,3 +1,7 @@
+// Ruta de bienvenida para la raíz
+app.get('/', (req, res) => {
+    res.send('GYT Collector API está corriendo');
+});
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
