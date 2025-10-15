@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment>
+    <transaction>
+        <id>12345</id>
+        <amount>150.50</amount>
+        <currency>GTQ</currency>
+        <description>Pago de servicios</description>
+        <customer>
+            <name>Juan Pérez</name>
+            <email>juan.perez@email.com</email>
+            <phone>+502 1234-5678</phone>
+        </customer>
+        <timestamp>2025-10-15T23:07:00Z</timestamp>
+    </transaction>
+</payment>
