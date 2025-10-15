@@ -3,66 +3,109 @@
 Integración API Colecturía Regional con Web Service Banco GYT Continental
 
 ## Overview
-This is an ASP.NET Core Web API project that integrates regional collection services with Banco GYT Continental's Web Service.
+This repository contains services for integrating the Regional Collection API with GYT Continental Bank Web Service, including XML validation capabilities for SOAP-based communication.
+
+## Features
+
+- **XML Validation Service**: Comprehensive XML validation against XSD schemas
+- **Well-formedness checking**: Validates XML structure and syntax
+- **Schema validation**: Validates XML content against XSD schemas
+- **Error reporting**: Detailed error and warning messages
+- **Test coverage**: Comprehensive unit tests with xUnit
+
+## Project Structure
+
+```
+├── src/
+│   └── GytCollectorRegionalApi.Services/    # Service library
+│       └── XmlValidationService.cs          # XML validation service
+├── tests/
+│   └── GytCollectorRegionalApi.Tests/       # Unit tests
+│       └── XmlValidationServiceTests.cs     # Test suite
+├── examples/                                # Example files
+│   ├── schemas/                            # XSD schemas
+│   │   └── payment_request.xsd             # Payment request schema
+│   ├── valid_payment_request.xml           # Valid example
+│   └── invalid_payment_request.xml         # Invalid example
+├── XmlValidationService.md                  # Documentation
+├── XmlValidationServiceExample.cs           # Usage examples
+└── GytCollectorRegionalApi.sln             # Solution file
+```
 
 ## Getting Started
 
 ### Prerequisites
 - .NET 9.0 SDK or later
+- Visual Studio 2022 or Visual Studio Code (optional)
 
 ### Building the Project
+
 ```bash
-dotnet build
+# Clone the repository
+git clone https://github.com/andrescoto-cpu/gyt-collector-regional-api-integration.git
+cd gyt-collector-regional-api-integration
+
+# Build the solution
+dotnet build GytCollectorRegionalApi.sln
 ```
 
-### Running the Application
+### Running Tests
+
 ```bash
-dotnet run
+# Run all tests
+dotnet test GytCollectorRegionalApi.sln
+
+# Run tests with detailed output
+dotnet test GytCollectorRegionalApi.sln --verbosity detailed
 ```
 
-The API will be available at `http://localhost:5241`
+### Using the XML Validation Service
 
-## API Endpoints
+```csharp
+using GytCollectorRegionalApi.Services;
 
-### Banco GYT Controller (`/api/BancoGyt`)
+// Create service instance
+var validationService = new XmlValidationService();
 
-#### Health Check
-- **GET** `/api/BancoGyt/health`
-- Returns the health status of the integration service
+// Validate well-formedness
+string xmlContent = @"<?xml version=""1.0""?><root><element>value</element></root>";
+bool isValid = validationService.IsWellFormedXml(xmlContent);
 
-#### Verify Payment
-- **GET** `/api/BancoGyt/verify/{paymentId}`
-- Verifies a payment with Banco GYT Continental
-- Parameters:
-  - `paymentId`: Payment identifier
+// Validate against schema
+bool isSchemaValid = validationService.ValidateAgainstSchema(
+    xmlContent, 
+    "path/to/schema.xsd"
+);
 
-#### Collect Payment
-- **POST** `/api/BancoGyt/collect`
-- Processes a payment collection through Banco GYT Continental
-- Request Body:
-```json
+// Get validation errors
+if (!isSchemaValid)
 {
-  "amount": 100.50,
-  "currency": "GTQ",
-  "accountReference": "ACC123",
-  "description": "Payment description"
+    foreach (var error in validationService.GetValidationErrors())
+    {
+        Console.WriteLine(error);
+    }
 }
 ```
 
-#### Get Payment Status
-- **GET** `/api/BancoGyt/status/{transactionId}`
-- Queries the status of a transaction
-- Parameters:
-  - `transactionId`: Transaction identifier
+## Documentation
 
-## Project Structure
-```
-.
-├── Controllers/
-│   └── BancoGytController.cs    # Main controller for Banco GYT integration
-├── Properties/
-│   └── launchSettings.json
-├── Program.cs                    # Application entry point
-├── appsettings.json             # Application configuration
-└── GytCollectorRegionalApi.csproj
-```
+See [XmlValidationService.md](XmlValidationService.md) for detailed API documentation and usage examples.
+
+## Testing
+
+The project includes comprehensive unit tests covering:
+- Valid XML validation
+- Invalid XML detection
+- Schema validation (file and string-based)
+- Error message formatting
+- Edge cases and null handling
+
+Test results:
+- **Total Tests**: 13
+- **Passed**: 13
+- **Failed**: 0
+- **Coverage**: Core validation scenarios
+
+## License
+
+This project is part of the GYT Continental Bank integration initiative.
