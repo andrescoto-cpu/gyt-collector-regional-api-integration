@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Banco GYT Continental - Test Cases for API Integration
+    Colecturía Regional Web Service Test Data
+    
+    This file contains sample XML payloads for testing the integration
+    between Banco GYT Continental and the Colecturía Regional API.
+-->
+<TestSuite>
+    <Metadata>
+        <Name>Banco GYT Integration Tests</Name>
+        <Description>Test cases for payment collection integration with Banco GYT Continental</Description>
+        <Version>1.0</Version>
+        <Created>2025-10-15</Created>
+    </Metadata>
+    
+    <!-- Test Case 1: Successful Payment Query -->
+    <TestCase id="TC001" name="Successful Payment Query">
+        <Description>Valid payment query request from Banco GYT</Description>
+        <Request>
+            <PaymentQuery>
+                <Header>
+                    <TransactionId>TRX001234567890</TransactionId>
+                    <Timestamp>2025-10-15T18:30:00Z</Timestamp>
+                    <BankCode>GYT</BankCode>
+                    <BranchCode>001</BranchCode>
+                </Header>
+                <QueryData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>12345678-9</Number>
+                    </CustomerIdentification>
+                    <ServiceType>PAYMENT_QUERY</ServiceType>
+                    <ReferenceNumber>REF2025001234</ReferenceNumber>
+                </QueryData>
+            </PaymentQuery>
+        </Request>
+        <ExpectedResponse>
+            <PaymentResponse>
+                <Status>SUCCESS</Status>
+                <ResponseCode>200</ResponseCode>
+                <Message>Payment information retrieved successfully</Message>
+                <PaymentDetails>
+                    <Amount>1500.00</Amount>
+                    <Currency>GTQ</Currency>
+                    <DueDate>2025-10-31</DueDate>
+                    <Description>Monthly Service Payment</Description>
+                </PaymentDetails>
+            </PaymentResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 2: Payment Confirmation -->
+    <TestCase id="TC002" name="Payment Confirmation">
+        <Description>Payment confirmation from Banco GYT</Description>
+        <Request>
+            <PaymentConfirmation>
+                <Header>
+                    <TransactionId>TRX001234567891</TransactionId>
+                    <Timestamp>2025-10-15T19:00:00Z</Timestamp>
+                    <BankCode>GYT</BankCode>
+                    <BranchCode>001</BranchCode>
+                </Header>
+                <PaymentData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>12345678-9</Number>
+                    </CustomerIdentification>
+                    <ReferenceNumber>REF2025001234</ReferenceNumber>
+                    <Amount>1500.00</Amount>
+                    <Currency>GTQ</Currency>
+                    <PaymentDate>2025-10-15</PaymentDate>
+                    <ReceiptNumber>RCP2025001234567</ReceiptNumber>
+                </PaymentData>
+            </PaymentConfirmation>
+        </Request>
+        <ExpectedResponse>
+            <ConfirmationResponse>
+                <Status>SUCCESS</Status>
+                <ResponseCode>201</ResponseCode>
+                <Message>Payment confirmed successfully</Message>
+                <ConfirmationNumber>CNF2025001234567</ConfirmationNumber>
+            </ConfirmationResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 3: Invalid Customer ID -->
+    <TestCase id="TC003" name="Invalid Customer Identification">
+        <Description>Payment query with invalid customer identification</Description>
+        <Request>
+            <PaymentQuery>
+                <Header>
+                    <TransactionId>TRX001234567892</TransactionId>
+                    <Timestamp>2025-10-15T20:00:00Z</Timestamp>
+                    <BankCode>GYT</BankCode>
+                    <BranchCode>001</BranchCode>
+                </Header>
+                <QueryData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>INVALID-ID</Number>
+                    </CustomerIdentification>
+                    <ServiceType>PAYMENT_QUERY</ServiceType>
+                    <ReferenceNumber>REF2025001235</ReferenceNumber>
+                </QueryData>
+            </PaymentQuery>
+        </Request>
+        <ExpectedResponse>
+            <ErrorResponse>
+                <Status>ERROR</Status>
+                <ResponseCode>400</ResponseCode>
+                <ErrorCode>ERR_INVALID_CUSTOMER</ErrorCode>
+                <Message>Customer identification is invalid</Message>
+            </ErrorResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 4: Payment Not Found -->
+    <TestCase id="TC004" name="Payment Not Found">
+        <Description>Payment query for non-existent payment</Description>
+        <Request>
+            <PaymentQuery>
+                <Header>
+                    <TransactionId>TRX001234567893</TransactionId>
+                    <Timestamp>2025-10-15T21:00:00Z</Timestamp>
+                    <BankCode>GYT</BankCode>
+                    <BranchCode>001</BranchCode>
+                </Header>
+                <QueryData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>98765432-1</Number>
+                    </CustomerIdentification>
+                    <ServiceType>PAYMENT_QUERY</ServiceType>
+                    <ReferenceNumber>REF2025999999</ReferenceNumber>
+                </QueryData>
+            </PaymentQuery>
+        </Request>
+        <ExpectedResponse>
+            <ErrorResponse>
+                <Status>ERROR</Status>
+                <ResponseCode>404</ResponseCode>
+                <ErrorCode>ERR_PAYMENT_NOT_FOUND</ErrorCode>
+                <Message>Payment reference not found</Message>
+            </ErrorResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 5: Duplicate Payment -->
+    <TestCase id="TC005" name="Duplicate Payment Attempt">
+        <Description>Attempt to confirm an already confirmed payment</Description>
+        <Request>
+            <PaymentConfirmation>
+                <Header>
+                    <TransactionId>TRX001234567894</TransactionId>
+                    <Timestamp>2025-10-15T22:00:00Z</Timestamp>
+                    <BankCode>GYT</BankCode>
+                    <BranchCode>001</BranchCode>
+                </Header>
+                <PaymentData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>12345678-9</Number>
+                    </CustomerIdentification>
+                    <ReferenceNumber>REF2025001234</ReferenceNumber>
+                    <Amount>1500.00</Amount>
+                    <Currency>GTQ</Currency>
+                    <PaymentDate>2025-10-15</PaymentDate>
+                    <ReceiptNumber>RCP2025001234567</ReceiptNumber>
+                </PaymentData>
+            </PaymentConfirmation>
+        </Request>
+        <ExpectedResponse>
+            <ErrorResponse>
+                <Status>ERROR</Status>
+                <ResponseCode>409</ResponseCode>
+                <ErrorCode>ERR_DUPLICATE_PAYMENT</ErrorCode>
+                <Message>Payment has already been confirmed</Message>
+                <ExistingConfirmation>CNF2025001234567</ExistingConfirmation>
+            </ErrorResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 6: Insufficient Amount -->
+    <TestCase id="TC006" name="Insufficient Payment Amount">
+        <Description>Payment confirmation with amount less than required</Description>
+        <Request>
+            <PaymentConfirmation>
+                <Header>
+                    <TransactionId>TRX001234567895</TransactionId>
+                    <Timestamp>2025-10-15T23:00:00Z</Timestamp>
+                    <BankCode>GYT</BankCode>
+                    <BranchCode>001</BranchCode>
+                </Header>
+                <PaymentData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>12345678-9</Number>
+                    </CustomerIdentification>
+                    <ReferenceNumber>REF2025001236</ReferenceNumber>
+                    <Amount>1000.00</Amount>
+                    <Currency>GTQ</Currency>
+                    <PaymentDate>2025-10-15</PaymentDate>
+                    <ReceiptNumber>RCP2025001234568</ReceiptNumber>
+                </PaymentData>
+            </PaymentConfirmation>
+        </Request>
+        <ExpectedResponse>
+            <ErrorResponse>
+                <Status>ERROR</Status>
+                <ResponseCode>400</ResponseCode>
+                <ErrorCode>ERR_INSUFFICIENT_AMOUNT</ErrorCode>
+                <Message>Payment amount is less than required</Message>
+                <Details>
+                    <RequiredAmount>1500.00</RequiredAmount>
+                    <ReceivedAmount>1000.00</ReceivedAmount>
+                    <Difference>500.00</Difference>
+                </Details>
+            </ErrorResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 7: Multiple Services Payment -->
+    <TestCase id="TC007" name="Multiple Services Payment Query">
+        <Description>Query for customer with multiple pending payments</Description>
+        <Request>
+            <PaymentQuery>
+                <Header>
+                    <TransactionId>TRX001234567896</TransactionId>
+                    <Timestamp>2025-10-16T08:00:00Z</Timestamp>
+                    <BankCode>GYT</BankCode>
+                    <BranchCode>002</BranchCode>
+                </Header>
+                <QueryData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>55555555-5</Number>
+                    </CustomerIdentification>
+                    <ServiceType>PAYMENT_QUERY</ServiceType>
+                </QueryData>
+            </PaymentQuery>
+        </Request>
+        <ExpectedResponse>
+            <PaymentResponse>
+                <Status>SUCCESS</Status>
+                <ResponseCode>200</ResponseCode>
+                <Message>Multiple payments found</Message>
+                <PaymentList>
+                    <Payment>
+                        <ReferenceNumber>REF2025001237</ReferenceNumber>
+                        <Amount>1500.00</Amount>
+                        <Currency>GTQ</Currency>
+                        <DueDate>2025-10-31</DueDate>
+                        <Description>Monthly Service Payment - October</Description>
+                    </Payment>
+                    <Payment>
+                        <ReferenceNumber>REF2025001238</ReferenceNumber>
+                        <Amount>1500.00</Amount>
+                        <Currency>GTQ</Currency>
+                        <DueDate>2025-09-30</DueDate>
+                        <Description>Monthly Service Payment - September (Overdue)</Description>
+                        <Penalty>150.00</Penalty>
+                    </Payment>
+                </PaymentList>
+            </PaymentResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 8: System Error Simulation -->
+    <TestCase id="TC008" name="System Error Handling">
+        <Description>Test case to simulate system error response</Description>
+        <Request>
+            <PaymentQuery>
+                <Header>
+                    <TransactionId>TRX001234567897</TransactionId>
+                    <Timestamp>2025-10-16T09:00:00Z</Timestamp>
+                    <BankCode>GYT</BankCode>
+                    <BranchCode>001</BranchCode>
+                </Header>
+                <QueryData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>ERROR-TEST</Number>
+                    </CustomerIdentification>
+                    <ServiceType>PAYMENT_QUERY</ServiceType>
+                    <ReferenceNumber>REF2025ERROR</ReferenceNumber>
+                </QueryData>
+            </PaymentQuery>
+        </Request>
+        <ExpectedResponse>
+            <ErrorResponse>
+                <Status>ERROR</Status>
+                <ResponseCode>500</ResponseCode>
+                <ErrorCode>ERR_SYSTEM_ERROR</ErrorCode>
+                <Message>Internal system error occurred</Message>
+                <SupportReference>SUP2025001234</SupportReference>
+            </ErrorResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 9: Missing Required Fields -->
+    <TestCase id="TC009" name="Missing Required Fields">
+        <Description>Request with missing required fields</Description>
+        <Request>
+            <PaymentQuery>
+                <Header>
+                    <TransactionId>TRX001234567898</TransactionId>
+                    <BankCode>GYT</BankCode>
+                </Header>
+                <QueryData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                    </CustomerIdentification>
+                    <ServiceType>PAYMENT_QUERY</ServiceType>
+                </QueryData>
+            </PaymentQuery>
+        </Request>
+        <ExpectedResponse>
+            <ErrorResponse>
+                <Status>ERROR</Status>
+                <ResponseCode>400</ResponseCode>
+                <ErrorCode>ERR_MISSING_REQUIRED_FIELDS</ErrorCode>
+                <Message>Required fields are missing</Message>
+                <MissingFields>
+                    <Field>Header.Timestamp</Field>
+                    <Field>Header.BranchCode</Field>
+                    <Field>QueryData.CustomerIdentification.Number</Field>
+                </MissingFields>
+            </ErrorResponse>
+        </ExpectedResponse>
+    </TestCase>
+    
+    <!-- Test Case 10: Authentication Failure -->
+    <TestCase id="TC010" name="Authentication Failure">
+        <Description>Request with invalid or missing authentication</Description>
+        <Request>
+            <PaymentQuery>
+                <Header>
+                    <TransactionId>TRX001234567899</TransactionId>
+                    <Timestamp>2025-10-16T10:00:00Z</Timestamp>
+                    <BankCode>INVALID</BankCode>
+                    <BranchCode>999</BranchCode>
+                </Header>
+                <QueryData>
+                    <CustomerIdentification>
+                        <Type>NIT</Type>
+                        <Number>12345678-9</Number>
+                    </CustomerIdentification>
+                    <ServiceType>PAYMENT_QUERY</ServiceType>
+                    <ReferenceNumber>REF2025001239</ReferenceNumber>
+                </QueryData>
+            </PaymentQuery>
+        </Request>
+        <ExpectedResponse>
+            <ErrorResponse>
+                <Status>ERROR</Status>
+                <ResponseCode>401</ResponseCode>
+                <ErrorCode>ERR_AUTHENTICATION_FAILED</ErrorCode>
+                <Message>Invalid bank credentials</Message>
+            </ErrorResponse>
+        </ExpectedResponse>
+    </TestCase>
+</TestSuite>
