@@ -1,111 +1,211 @@
-# GYT Collector Regional API Integration
+# gyt-collector-regional-api-integration
 
 Integración API Colecturía Regional con Web Service Banco GYT Continental
 
-## Overview
-This repository contains services for integrating the Regional Collection API with GYT Continental Bank Web Service, including XML validation capabilities for SOAP-based communication.
+## Descripción
 
-## Features
+Este proyecto proporciona una API REST para integrar la Colecturía Regional con el Web Service del Banco GYT Continental a través del servicio Akros.
 
-- **XML Validation Service**: Comprehensive XML validation against XSD schemas
-- **Well-formedness checking**: Validates XML structure and syntax
-- **Schema validation**: Validates XML content against XSD schemas
-- **Error reporting**: Detailed error and warning messages
-- **Test coverage**: Comprehensive unit tests with xUnit
-
-## Project Structure
+## Estructura del Proyecto
 
 ```
-├── src/
-│   └── GytCollectorRegionalApi.Services/    # Service library
-│       └── XmlValidationService.cs          # XML validation service
-├── tests/
-│   └── GytCollectorRegionalApi.Tests/       # Unit tests
-│       └── XmlValidationServiceTests.cs     # Test suite
-├── examples/                                # Example files
-│   ├── schemas/                            # XSD schemas
-│   │   └── payment_request.xsd             # Payment request schema
-│   ├── valid_payment_request.xml           # Valid example
-│   └── invalid_payment_request.xml         # Invalid example
-├── XmlValidationService.md                  # Documentation
-├── XmlValidationServiceExample.cs           # Usage examples
-└── GytCollectorRegionalApi.sln             # Solution file
+GytCollectorApi/
+├── Controllers/
+│   └── PaymentsController.cs    # Controlador de pagos
+├── Services/
+│   └── akros_api_service.cs     # Servicio de integración con Akros API
+├── Program.cs                    # Punto de entrada de la aplicación
+├── appsettings.json             # Configuración de la aplicación
+└── GytCollectorApi.csproj       # Archivo de proyecto .NET
+
+GytCollectorApi.Tests/
+├── AkrosApiServiceTests.cs      # Pruebas unitarias del servicio Akros
+└── GytCollectorApi.Tests.csproj # Archivo de proyecto de pruebas
+
+GytCollectorApi.sln              # Archivo de solución .NET
 ```
 
-## Getting Started
+## Características
 
-### Prerequisites
-- .NET 9.0 SDK or later
-- Visual Studio 2022 or Visual Studio Code (optional)
+- **Servicio Akros API**: Servicio completo para integración con la API de Akros
+  - Envío de pagos
+  - Consulta de estado de transacciones
+  - Validación de conectividad
 
-### Building the Project
+- **Controlador de Pagos**: API REST con endpoints para:
+  - `POST /api/payments` - Procesar un nuevo pago
+  - `GET /api/payments/{transactionId}/status` - Consultar estado de pago
+  - `GET /api/payments/health` - Verificar conectividad con Akros API
 
-```bash
-# Clone the repository
-git clone https://github.com/andrescoto-cpu/gyt-collector-regional-api-integration.git
-cd gyt-collector-regional-api-integration
+## Requisitos
 
-# Build the solution
-dotnet build GytCollectorRegionalApi.sln
-```
+- .NET 9.0 SDK o superior
+- Visual Studio 2022, VS Code, o Rider (opcional)
 
-### Running Tests
+## Configuración
 
-```bash
-# Run all tests
-dotnet test GytCollectorRegionalApi.sln
+1. Actualizar `appsettings.json` con la URL base del API de Akros:
 
-# Run tests with detailed output
-dotnet test GytCollectorRegionalApi.sln --verbosity detailed
-```
-
-### Using the XML Validation Service
-
-```csharp
-using GytCollectorRegionalApi.Services;
-
-// Create service instance
-var validationService = new XmlValidationService();
-
-// Validate well-formedness
-string xmlContent = @"<?xml version=""1.0""?><root><element>value</element></root>";
-bool isValid = validationService.IsWellFormedXml(xmlContent);
-
-// Validate against schema
-bool isSchemaValid = validationService.ValidateAgainstSchema(
-    xmlContent, 
-    "path/to/schema.xsd"
-);
-
-// Get validation errors
-if (!isSchemaValid)
+```json
 {
-    foreach (var error in validationService.GetValidationErrors())
-    {
-        Console.WriteLine(error);
-    }
+  "AkrosApi": {
+    "BaseUrl": "https://api.akros.example.com",
+    "Timeout": 30
+  }
 }
 ```
 
-## Documentation
+## Ejecución
 
-See [XmlValidationService.md](XmlValidationService.md) for detailed API documentation and usage examples.
+### Modo Desarrollo
+
+```bash
+cd GytCollectorApi
+dotnet run
+```
+
+O desde la raíz del proyecto:
+
+```bash
+dotnet run --project GytCollectorApi
+```
+
+### Compilación
+
+Compilar todo el proyecto:
+
+```bash
+dotnet build GytCollectorApi.sln
+```
+
+O compilar solo la API:
+
+```bash
+cd GytCollectorApi
+dotnet build
+```
+
+### Pruebas (Tests)
+
+Ejecutar todas las pruebas:
+
+```bash
+dotnet test GytCollectorApi.sln
+```
+
+O ejecutar solo las pruebas del proyecto de tests:
+
+```bash
+cd GytCollectorApi.Tests
+dotnet test
+```
+
+### Publicación
+
+```bash
+cd GytCollectorApi
+dotnet publish -c Release
+```
+
+## Uso de la API
+
+### Procesar un Pago
+
+```bash
+curl -X POST http://localhost:5000/api/payments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "transactionId": "TXN123456",
+    "amount": 100.50,
+    "currency": "GTQ",
+    "accountNumber": "1234567890",
+    "customerName": "Juan Pérez",
+    "transactionDate": "2025-10-15T12:00:00",
+    "description": "Pago de servicio"
+  }'
+```
+
+### Consultar Estado de Pago
+
+```bash
+curl http://localhost:5000/api/payments/TXN123456/status
+```
+
+### Verificar Salud del Servicio
+
+```bash
+curl http://localhost:5000/api/payments/health
+```
+
+## Documentación de la API
+
+Cuando la aplicación se ejecuta en modo desarrollo, la documentación OpenAPI está disponible en:
+
+- OpenAPI JSON: `http://localhost:5000/openapi/v1.json`
+
+## Estructura de Datos
+
+### PaymentRequest
+
+```json
+{
+  "transactionId": "string",
+  "amount": 0.0,
+  "currency": "string",
+  "accountNumber": "string",
+  "customerName": "string",
+  "transactionDate": "2025-10-15T12:00:00",
+  "description": "string"
+}
+```
+
+### AkrosApiResponse
+
+```json
+{
+  "success": true,
+  "message": "string",
+  "transactionId": "string",
+  "processedDate": "2025-10-15T12:00:00",
+  "referenceNumber": "string"
+}
+```
+
+### PaymentStatus
+
+```json
+{
+  "status": "string",
+  "transactionId": "string",
+  "message": "string",
+  "lastUpdated": "2025-10-15T12:00:00"
+}
+```
 
 ## Testing
 
-The project includes comprehensive unit tests covering:
-- Valid XML validation
-- Invalid XML detection
-- Schema validation (file and string-based)
-- Error message formatting
-- Edge cases and null handling
+El proyecto incluye pruebas unitarias completas para el servicio `AkrosApiService`. Las pruebas cubren:
 
-Test results:
-- **Total Tests**: 13
-- **Passed**: 13
-- **Failed**: 0
-- **Coverage**: Core validation scenarios
+- ✅ Envío exitoso de pagos
+- ✅ Manejo de errores HTTP en envío de pagos
+- ✅ Consulta exitosa de estado de pago
+- ✅ Manejo de errores HTTP en consulta de estado
+- ✅ Validación de conexión exitosa
+- ✅ Manejo de fallo en validación de conexión
 
-## License
+Ejecutar las pruebas:
 
-This project is part of the GYT Continental Bank integration initiative.
+```bash
+dotnet test GytCollectorApi.sln
+```
+
+Para ver cobertura de código detallada, ejecutar:
+
+```bash
+cd GytCollectorApi.Tests
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+## Licencia
+
+Este proyecto es propiedad de GYT Continental Bank.
