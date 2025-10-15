@@ -1,7 +1,7 @@
 using System;
 using GytCollectorRegionalApi.Services;
 
-namespace GytCollectorRegionalApi
+namespace GytCollectorRegionalApi.Examples
 {
     /// <summary>
     /// Example program demonstrating the LoggingService usage
