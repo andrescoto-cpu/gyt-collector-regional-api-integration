@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GytCollectorApi.Services
@@ -136,12 +137,25 @@ namespace GytCollectorApi.Services
     /// </summary>
     public class PaymentRequest
     {
+        [JsonPropertyName("transactionId")]
         public string? TransactionId { get; set; }
+        
+        [JsonPropertyName("amount")]
         public decimal Amount { get; set; }
+        
+        [JsonPropertyName("currency")]
         public string? Currency { get; set; }
+        
+        [JsonPropertyName("accountNumber")]
         public string? AccountNumber { get; set; }
+        
+        [JsonPropertyName("customerName")]
         public string? CustomerName { get; set; }
+        
+        [JsonPropertyName("transactionDate")]
         public DateTime TransactionDate { get; set; }
+        
+        [JsonPropertyName("description")]
         public string? Description { get; set; }
     }
 
@@ -150,10 +164,19 @@ namespace GytCollectorApi.Services
     /// </summary>
     public class AkrosApiResponse
     {
+        [JsonPropertyName("success")]
         public bool Success { get; set; }
+        
+        [JsonPropertyName("message")]
         public string? Message { get; set; }
+        
+        [JsonPropertyName("transactionId")]
         public string? TransactionId { get; set; }
+        
+        [JsonPropertyName("processedDate")]
         public DateTime? ProcessedDate { get; set; }
+        
+        [JsonPropertyName("referenceNumber")]
         public string? ReferenceNumber { get; set; }
     }
 
@@ -162,9 +185,16 @@ namespace GytCollectorApi.Services
     /// </summary>
     public class PaymentStatus
     {
+        [JsonPropertyName("status")]
         public string? Status { get; set; }
+        
+        [JsonPropertyName("transactionId")]
         public string? TransactionId { get; set; }
+        
+        [JsonPropertyName("message")]
         public string? Message { get; set; }
+        
+        [JsonPropertyName("lastUpdated")]
         public DateTime? LastUpdated { get; set; }
     }
 
