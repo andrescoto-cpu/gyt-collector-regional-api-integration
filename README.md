@@ -1,4 +1,5 @@
-# gyt-collector-regional-api-integration
+# GYT Collector Regional API Integration
+
 Integración API Colecturía Regional con Web Service Banco GYT Continental
 
 ## Overview

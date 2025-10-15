@@ -91,3 +91,12 @@ _ReSharper*/
 
 # .NET Core
 .vscode/
+node_modules/
+.env
+*.log
+.DS_Store
+coverage/
+dist/
+build/
+*.pem
+certs/
