@@ -39,4 +39,4 @@ class CollectorController {
     }
 }
 
-export default new CollectorController();
+module.exports = new CollectorController();

@@ -2,6 +2,9 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const bodyParserXml = require('body-parser-xml');
+// Configurar body-parser-xml
+bodyParserXml(bodyParser);
 const collectorController = require('./controllers/collectorController');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -20,7 +23,7 @@ app.post('/api/collector/payment', collectorController.processPayment);
 app.use(errorHandler);
 
 // Start the server
-const PORT = process.env.PORT || 443;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
