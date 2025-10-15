@@ -13,7 +13,9 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors());
-app.use(bodyParser.xml()); // Middleware to parse XML
+
+// Only parse XML for specific routes
+app.use('/api/collector/payment', bodyParser.xml()); // Middleware to parse XML
 app.use(bodyParser.json()); // Middleware to parse JSON
 
 // Routes
