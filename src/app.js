@@ -10,6 +10,12 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
+// Logging middleware para debug
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    next();
+});
+
 // Middleware
 app.use(helmet());
 app.use(cors());
