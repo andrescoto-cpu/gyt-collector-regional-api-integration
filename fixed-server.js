@@ -3,7 +3,12 @@ const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const bodyParserXml = require('body-parser-xml');
+const xml2js = require('xml2js');
 const logger = require('./src/utils/logger');
+
+// Configurar parsers XML
+const parser = new xml2js.Parser({ explicitArray: false });
+const builder = new xml2js.Builder();
 
 // Configurar body-parser-xml
 bodyParserXml(bodyParser);
@@ -83,9 +88,6 @@ app.post('/api/collector/payment', async (req, res) => {
         
         if (xmlData && xmlData.trim().startsWith('<')) {
             // Es XML válido, intentar parsear
-            const xml2js = require('xml2js');
-            const parser = new xml2js.Parser({ explicitArray: false });
-            
             try {
                 jsonData = await new Promise((resolve, reject) => {
                     parser.parseString(xmlData, (err, result) => {
@@ -120,8 +122,6 @@ app.post('/api/collector/payment', async (req, res) => {
             }
         };
         
-        const xml2js = require('xml2js');
-        const builder = new xml2js.Builder();
         const responseXml = builder.buildObject(responseData);
         
         console.log('Respuesta XML generada:');
